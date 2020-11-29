@@ -18,7 +18,7 @@ process.env.CADUCIDAD_TOKEN = 60 * 60 * 24 * 30;
 //////
 ////
 // seed autenticacion
-process.env.SEED = process.env.SEE || 'este-es-el-seed-desarrollo';
+process.env.SEED = process.env.SEE || 'este-es-el-seed-desarrollo'; // todo esto se manda como variable a heroku
 //////
 ////
 // base de datos
@@ -29,3 +29,7 @@ if (process.env.NODE_ENV === 'dev') {
     urlDB = process.env.MONGO_URI;
 }
 process.env.URLDB = urlDB;
+//////
+////
+//Google client id
+process.env.CLIENT_ID = process.env.CLIENT_ID || '616130708010-mhbd718bek2rs4plt4io0neq5lkursg7.apps.googleusercontent.com';
