@@ -3,8 +3,10 @@ const Usuario = require('../models/usuario');
 const app = express();
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { VerificaToken, Verifica_rol } = require('../middlewares/autenticacion');
 
-app.get('/usuarios', function(req, res) {
+app.get('/usuarios', VerificaToken, (req, res) => {
+
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let limite = req.query.limite || 5;
@@ -14,14 +16,14 @@ app.get('/usuarios', function(req, res) {
         .skip(desde)
         .limit(limite)
         .exec((err, usuarios) => {
-            if (err) {
+            if (err) { //error basico
                 return res.status(400).json({
                     ok: false,
                     err
                 });
             }
             Usuario.count({ estado: true }, (err, conteo) => {
-                res.json({
+                res.json({ //respuesta basica 
                     ok: true,
                     usuarios,
                     cuantos: conteo
@@ -30,7 +32,7 @@ app.get('/usuarios', function(req, res) {
 
         })
 })
-app.post('/usuarios', function(req, res) {
+app.post('/usuarios', [VerificaToken, Verifica_rol], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -61,7 +63,7 @@ app.post('/usuarios', function(req, res) {
 
 
 })
-app.put('/usuarios/:id', function(req, res) {
+app.put('/usuarios/:id', [VerificaToken, Verifica_rol], (req, res) => {
     let id = req.params.id;
 
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -82,7 +84,7 @@ app.put('/usuarios/:id', function(req, res) {
     })
 
 })
-app.delete('/usuarios/:id', function(req, res) {
+app.delete('/usuarios/:id', VerificaToken, (req, res) => {
     let id = req.params.id;
     let cambiaEstado = {
         estado: false
