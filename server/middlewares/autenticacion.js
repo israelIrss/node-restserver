@@ -21,6 +21,7 @@ let VerificaToken = (req, res, next) => {
     });
 
 };
+//verifica rol
 let Verifica_rol = (req, res, next) => {
     let usuario = req.usuario;
     if (usuario.role === 'ADMIN_ROLE') {
@@ -35,8 +36,26 @@ let Verifica_rol = (req, res, next) => {
         });
     }
 };
+//verifica token en imagen
+let verificaTokenImg = (req, res, next) => {
+    let token = req.query.token;
+    jwt.verify(token, process.env.SEED, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token no valido'
+                }
+            });
+        }
+
+        req.usuario = decoded.usuario;
+        next();
+    });
+};
 
 module.exports = {
     VerificaToken,
-    Verifica_rol
+    Verifica_rol,
+    verificaTokenImg
 }
